@@ -8,7 +8,6 @@
 class Renderer
 {
 	static constexpr int FACE_COUNT = cubeSolver::Cube::Face::faceCount;
-	static constexpr int COLOUR_COUNT = cubeSolver::Cube::Colour::colourCount;
 
 	static constexpr int VTX_PER_FACE = 4;
 	static constexpr int CUBE_VTX_COUNT = FACE_COUNT * VTX_PER_FACE;
@@ -16,7 +15,7 @@ class Renderer
 	static constexpr int VTX_PER_TRIANGLE = 3;
 	static constexpr int CUBE_INDICE_COUNT = FACE_COUNT * TRIANGLES_PER_FACE * VTX_PER_TRIANGLE;
 
-	ALLEGRO_VERTEX cubeVtx[COLOUR_COUNT * CUBE_VTX_COUNT];
+	ALLEGRO_VERTEX cubeVtx[CUBE_VTX_COUNT];
 	int cubeIndices[CUBE_INDICE_COUNT] = {
 		 0,  1,  2, // front
 		 0,  2,  3,
@@ -34,8 +33,9 @@ class Renderer
 
 public:
 	Renderer();
-	void drawCube(ALLEGRO_BITMAP* texture, float x, float y, float z, float theta, cubeSolver::Cube::Colour colours[FACE_COUNT]);
+	void drawCube(ALLEGRO_BITMAP* texture, cubeSolver::Cube cube);
 
 private:
 	void updateCubeVertices(float x, float y, float z);
+	void updateCubeColours(const cubeSolver::Cube::Colours& colours, bool revert);
 };

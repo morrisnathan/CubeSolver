@@ -5,92 +5,104 @@ Renderer::Renderer()
 {
 	ALLEGRO_COLOR c = al_map_rgb_f(1, 1, 1);
 
-	for (int colour = 0; colour < COLOUR_COUNT; ++colour)
-	{
-		// Front face
-		cubeVtx[colour * CUBE_VTX_COUNT] =      { -1, -1,  1, (float)colour * 250,         0, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 1] =  { -1,  1,  1, (float)colour * 250,       250, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 2] =  {  1,  1,  1, (float)colour * 250 + 250, 250, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 3] =  {  1, -1,  1, (float)colour * 250 + 250,   0, c };
-		// Right face
-		cubeVtx[colour * CUBE_VTX_COUNT + 4] =  {  1, -1,  1, (float)colour * 250,         0, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 5] =  {  1,  1,  1, (float)colour * 250,       250, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 6] =  {  1,  1, -1, (float)colour * 250 + 250, 250, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 7] =  {  1, -1, -1, (float)colour * 250 + 250,   0, c };
-		// Back face
-		cubeVtx[colour * CUBE_VTX_COUNT + 8] =  {  1, -1, -1, (float)colour * 250,         0, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 9] =  {  1,  1, -1, (float)colour * 250,       250, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 10] = { -1,  1, -1, (float)colour * 250 + 250, 250, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 11] = { -1, -1, -1, (float)colour * 250 + 250,   0, c };
-		// Left face
-		cubeVtx[colour * CUBE_VTX_COUNT + 12] = { -1, -1, -1, (float)colour * 250,         0, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 13] = { -1,  1, -1, (float)colour * 250,       250, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 14] = { -1,  1,  1, (float)colour * 250 + 250, 250, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 15] = { -1, -1,  1, (float)colour * 250 + 250,   0, c };
-		// Top face
-		cubeVtx[colour * CUBE_VTX_COUNT + 16] = { -1,  1,  1, (float)colour * 250,         0, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 17] = { -1,  1, -1, (float)colour * 250,       250, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 18] = {  1,  1, -1, (float)colour * 250 + 250, 250, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 19] = {  1,  1,  1, (float)colour * 250 + 250,   0, c };
-		// Bottom face
-		cubeVtx[colour * CUBE_VTX_COUNT + 20] = { -1, -1, -1, (float)colour * 250,         0, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 21] = { -1, -1,  1, (float)colour * 250,       250, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 22] = {  1, -1,  1, (float)colour * 250 + 250, 250, c };
-		cubeVtx[colour * CUBE_VTX_COUNT + 23] = {  1, -1, -1, (float)colour * 250 + 250,   0, c };
+	// Use the same vertices for each block in the cube with default translation and
+	// texture coordinates. The process to draw the cube will then update the coordinates
+	// for each block before drawing and then reset them afterwards.
 
-		for (int j = 0; j < CUBE_VTX_COUNT; ++j)
-		{
-			cubeVtx[colour * CUBE_VTX_COUNT + j].x = cubeVtx[colour * CUBE_VTX_COUNT + j].x * 0.97;
-			cubeVtx[colour * CUBE_VTX_COUNT + j].y = cubeVtx[colour * CUBE_VTX_COUNT + j].y * 0.97;
-			cubeVtx[colour * CUBE_VTX_COUNT + j].z = cubeVtx[colour * CUBE_VTX_COUNT + j].z * 0.97;
-		}
+	// Front face
+	cubeVtx[0] =  { -1, -1,  1, 0,     0, c };
+	cubeVtx[1] =  { -1,  1,  1, 0,   250, c };
+	cubeVtx[2] =  {  1,  1,  1, 250, 250, c };
+	cubeVtx[3] =  {  1, -1,  1, 250,   0, c };
+	// Right face
+	cubeVtx[4] =  {  1, -1,  1, 0,     0, c };
+	cubeVtx[5] =  {  1,  1,  1, 0,   250, c };
+	cubeVtx[6] =  {  1,  1, -1, 250, 250, c };
+	cubeVtx[7] =  {  1, -1, -1, 250,   0, c };
+	// Back face
+	cubeVtx[8] =  {  1, -1, -1, 0,     0, c };
+	cubeVtx[9] =  {  1,  1, -1, 0,   250, c };
+	cubeVtx[10] = { -1,  1, -1, 250, 250, c };
+	cubeVtx[11] = { -1, -1, -1, 250,   0, c };
+	// Left face
+	cubeVtx[12] = { -1, -1, -1, 0,     0, c };
+	cubeVtx[13] = { -1,  1, -1, 0,   250, c };
+	cubeVtx[14] = { -1,  1,  1, 250, 250, c };
+	cubeVtx[15] = { -1, -1,  1, 250,   0, c };
+	// Top face
+	cubeVtx[16] = { -1,  1,  1, 0,     0, c };
+	cubeVtx[17] = { -1,  1, -1, 0,   250, c };
+	cubeVtx[18] = {  1,  1, -1, 250, 250, c };
+	cubeVtx[19] = {  1,  1,  1, 250,   0, c };
+	// Bottom face
+	cubeVtx[20] = { -1, -1, -1, 0,     0, c };
+	cubeVtx[21] = { -1, -1,  1, 0,   250, c };
+	cubeVtx[22] = {  1, -1,  1, 250, 250, c };
+	cubeVtx[23] = {  1, -1, -1, 250,   0, c };
+
+	// Add space between each block
+	for (int j = 0; j < CUBE_VTX_COUNT; ++j)
+	{
+		cubeVtx[j].x *= 0.97;
+		cubeVtx[j].y *= 0.97;
+		cubeVtx[j].z *= 0.97;
 	}
 }
 
-void Renderer::drawCube(ALLEGRO_BITMAP* texture, float x, float y, float z, float theta, cubeSolver::Cube::Colour colours[FACE_COUNT])
+void Renderer::drawCube(ALLEGRO_BITMAP* texture, cubeSolver::Cube cube)
 {
 	ALLEGRO_TRANSFORM t;
+	const cubeSolver::Transform& ct = cube.getTransform();
 
 	al_identity_transform(&t);
-	al_rotate_transform_3d(&t, 0, 1, 0, theta);
-	al_rotate_transform_3d(&t, 1, 0, 0, 0.5);
-	al_translate_transform_3d(&t, x, y, z);
+	al_rotate_transform_3d(&t, 0, 1, 0, ct.rotation.y);
+	al_rotate_transform_3d(&t, 1, 0, 0, ct.rotation.x);
+	al_translate_transform_3d(&t, ct.translation.x, ct.translation.y, ct.translation.z);
 	al_use_transform(&t);
 
-	int indices[CUBE_INDICE_COUNT];
-	for (int i = 0; i < CUBE_INDICE_COUNT; ++i)
+	for (int z = 0; z < 3; ++z)
 	{
-		cubeSolver::Cube::Colour colour = colours[i / FACE_COUNT];
-		indices[i] = cubeIndices[i] + colour * CUBE_VTX_COUNT;
-	}
+		// Draw blocks from front slice to back slice
+		updateCubeVertices(0, 0, z == 0 ? 2 : -2);
 
-	for (int i = 0; i < 3; ++i)
-	{
-		updateCubeVertices(i == 0 ? -2 : 2, 0, 0);
-		for (int j = 0; j < 3; ++j)
+		for (int y = 0; y < 3; ++y)
 		{
-			updateCubeVertices(0, j == 0 ? -2 : 2, 0);
-			for (int k = 0; k < 3; ++k)
+			// Draw slices from top row to bottom row
+			updateCubeVertices(0, y == 0 ? 2 : -2, 0);
+
+			for (int x = 0; x < 3; ++x)
 			{
-				updateCubeVertices(0, 0, k == 0 ? -2 : 2);
-				al_draw_indexed_prim(cubeVtx, nullptr, texture, indices, CUBE_INDICE_COUNT, ALLEGRO_PRIM_TRIANGLE_LIST);
+				// Draw rows from left block to right block
+				updateCubeVertices(x == 0 ? -2 : 2, 0, 0);
+				const cubeSolver::Cube::Colours colours = cube.getColours()[z * 9 + y * 3 + x];
+
+				updateCubeColours(colours, false);
+				al_draw_indexed_prim(cubeVtx, nullptr, texture, cubeIndices, CUBE_INDICE_COUNT, ALLEGRO_PRIM_TRIANGLE_LIST);
+				updateCubeColours(colours, true);
 			}
-			updateCubeVertices(0, 0, -2);
+			updateCubeVertices(-2, 0, 0); // reset block (x) to middle
 		}
-		updateCubeVertices(0, -2, 0);
+		updateCubeVertices(0, 2, 0); // reset row (y) to middle
 	}
-	updateCubeVertices(-2, 0, 0);
+	updateCubeVertices(0, 0, 2); // reset slice (z) to middle
 }
 
 void Renderer::updateCubeVertices(float x, float y, float z)
 {
-	for (int colour = 0; colour < COLOUR_COUNT; ++colour)
+	for (int i = 0; i < CUBE_VTX_COUNT; ++i)
 	{
-		for (int j = 0; j < CUBE_VTX_COUNT; ++j)
-		{
-			cubeVtx[colour * CUBE_VTX_COUNT + j].x += x;
-			cubeVtx[colour * CUBE_VTX_COUNT + j].y += y;
-			cubeVtx[colour * CUBE_VTX_COUNT + j].z += z;
-		}
+		cubeVtx[i].x += x;
+		cubeVtx[i].y += y;
+		cubeVtx[i].z += z;
+	}
+}
+
+void Renderer::updateCubeColours(const cubeSolver::Cube::Colours& colours, bool revert)
+{
+
+	for (int i = 0; i < CUBE_VTX_COUNT; ++i)
+	{
+		cubeSolver::Cube::Colour colour = colours[i / VTX_PER_FACE];
+		cubeVtx[i].u += (revert ? -colour : colour) * 250;
 	}
 }

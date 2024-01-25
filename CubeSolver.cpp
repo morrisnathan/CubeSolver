@@ -64,9 +64,10 @@ int main()
 	al_register_event_source(queue, al_get_timer_event_source(timer));
 
 	Renderer renderer;
+	cubeSolver::Cube cube;
+
 	bool done = false;
 	bool redraw = true;
-	double theta = 0.5;
 
 	al_start_timer(timer);
 	while (true)
@@ -78,7 +79,6 @@ int main()
 		{
 		case ALLEGRO_EVENT_TIMER:
 			// game logic goes here.
-			theta += 0.03;
 			redraw = true;
 			break;
 
@@ -102,15 +102,7 @@ int main()
 			al_clear_to_color(al_map_rgb_f(0, 0, 0));
 			al_clear_depth_buffer(1000);
 
-			cubeSolver::Cube::Colour colours[cubeSolver::Cube::Face::faceCount] = {
-				cubeSolver::Cube::Colour::blue,
-				cubeSolver::Cube::Colour::orange,
-				cubeSolver::Cube::Colour::green,
-				cubeSolver::Cube::Colour::red,
-				cubeSolver::Cube::Colour::white,
-				cubeSolver::Cube::Colour::yellow
-			};
-			renderer.drawCube(texture, 0, 0, -10, theta, colours);
+			renderer.drawCube(texture, cube);
 			al_flip_display();
 
 			redraw = false;
