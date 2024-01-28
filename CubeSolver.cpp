@@ -78,13 +78,33 @@ int main()
 		switch (event.type)
 		{
 		case ALLEGRO_EVENT_TIMER:
-			// game logic goes here.
+			if (cube.isSliceRotating())
+				cube.rotateAndCheck();
+
 			redraw = true;
 			break;
 
 		case ALLEGRO_EVENT_KEY_DOWN:
-			if (event.keyboard.keycode != ALLEGRO_KEY_ESCAPE)
-				break;
+			if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+			{ 
+				done = true;
+			}
+			else if (!cube.isSliceRotating())
+			{
+				switch (event.keyboard.keycode)
+				{
+				case ALLEGRO_KEY_X:
+					cube.startRotating(Cube::SliceRotation::Axis::x, Cube::SliceRotation::third, true);
+					break;
+				case ALLEGRO_KEY_Y:
+					cube.startRotating(Cube::SliceRotation::Axis::y, Cube::SliceRotation::second, false);
+					break;
+				case ALLEGRO_KEY_Z:
+					cube.startRotating(Cube::SliceRotation::Axis::z, Cube::SliceRotation::third, false);
+					break;
+				}
+			}
+			break;
 
 		case ALLEGRO_EVENT_DISPLAY_CLOSE:
 			done = true;

@@ -49,16 +49,30 @@ Renderer::Renderer()
 	}
 }
 
-void Renderer::drawCube(ALLEGRO_BITMAP* texture, cubeSolver::Cube cube)
+void Renderer::drawCube(ALLEGRO_BITMAP* texture, Cube cube)
 {
-	ALLEGRO_TRANSFORM t;
-	const cubeSolver::Transform& ct = cube.getTransform();
+	ALLEGRO_TRANSFORM t; // cube parent transform
+	const Transform& ct = cube.getTransform();
 
 	al_identity_transform(&t);
 	al_rotate_transform_3d(&t, 0, 1, 0, ct.rotation.y);
 	al_rotate_transform_3d(&t, 1, 0, 0, ct.rotation.x);
 	al_translate_transform_3d(&t, ct.translation.x, ct.translation.y, ct.translation.z);
-	al_use_transform(&t);
+
+	ALLEGRO_TRANSFORM rt; // slice local transform
+	const Cube::SliceRotation& sr = cube.getSliceRotation();
+
+	if (cube.isSliceRotating())
+	{
+		al_identity_transform(&rt);
+		if (sr.axis == Cube::SliceRotation::Axis::x)
+			al_rotate_transform_3d(&rt, 1, 0, 0, sr.angle);		
+		else if (sr.axis == Cube::SliceRotation::Axis::y)
+			al_rotate_transform_3d(&rt, 0, 1, 0, sr.angle);
+		else if (sr.axis == Cube::SliceRotation::Axis::z)
+			al_rotate_transform_3d(&rt, 0, 0, 1, sr.angle);
+		al_compose_transform(&rt, &t);
+	}
 
 	for (int z = 0; z < 3; ++z)
 	{
@@ -72,9 +86,17 @@ void Renderer::drawCube(ALLEGRO_BITMAP* texture, cubeSolver::Cube cube)
 
 			for (int x = 0; x < 3; ++x)
 			{
+				if (cube.isSliceRotating() &&
+					((sr.axis == Cube::SliceRotation::Axis::x && x == sr.slice) ||
+						(sr.axis == Cube::SliceRotation::Axis::y && y == sr.slice) ||
+						(sr.axis == Cube::SliceRotation::Axis::z && z == sr.slice)))
+					al_use_transform(&rt);
+				else
+					al_use_transform(&t);
+
 				// Draw rows from left block to right block
 				updateCubeVertices(x == 0 ? -2 : 2, 0, 0);
-				const cubeSolver::Cube::Colours colours = cube.getColours()[z * 9 + y * 3 + x];
+				const Cube::Colours& colours = cube.getColours()[z * 9 + y * 3 + x];
 
 				updateCubeColours(colours, false);
 				al_draw_indexed_prim(cubeVtx, nullptr, texture, cubeIndices, CUBE_INDICE_COUNT, ALLEGRO_PRIM_TRIANGLE_LIST);
@@ -97,12 +119,12 @@ void Renderer::updateCubeVertices(float x, float y, float z)
 	}
 }
 
-void Renderer::updateCubeColours(const cubeSolver::Cube::Colours& colours, bool revert)
+void Renderer::updateCubeColours(const Cube::Colours& colours, bool revert)
 {
 
 	for (int i = 0; i < CUBE_VTX_COUNT; ++i)
 	{
-		cubeSolver::Cube::Colour colour = colours[i / VTX_PER_FACE];
+		Cube::Colour colour = colours[i / VTX_PER_FACE];
 		cubeVtx[i].u += (revert ? -colour : colour) * 250;
 	}
 }

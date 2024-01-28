@@ -5,9 +5,12 @@
 
 #include "Cube.h"
 
+using namespace cubeSolver;
+using cubeSolver::Cube;
+
 class Renderer
 {
-	static constexpr int FACE_COUNT = cubeSolver::Cube::Face::faceCount;
+	static constexpr int FACE_COUNT = Cube::Face::faceCount;
 
 	static constexpr int VTX_PER_FACE = 4;
 	static constexpr int CUBE_VTX_COUNT = FACE_COUNT * VTX_PER_FACE;
@@ -33,9 +36,9 @@ class Renderer
 
 public:
 	Renderer();
-	void drawCube(ALLEGRO_BITMAP* texture, cubeSolver::Cube cube);
+	void drawCube(ALLEGRO_BITMAP* texture, Cube cube);
 
 private:
 	void updateCubeVertices(float x, float y, float z);
-	void updateCubeColours(const cubeSolver::Cube::Colours& colours, bool revert);
+	void updateCubeColours(const Cube::Colours& colours, bool revert);
 };
