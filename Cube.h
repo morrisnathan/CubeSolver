@@ -49,7 +49,7 @@ namespace cubeSolver
 			};
 
 			enum Slice {
-				first = 0, second, third, none
+				first = 0, second, third, all, none
 			};
 
 			Axis axis;

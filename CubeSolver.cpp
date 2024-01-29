@@ -33,6 +33,7 @@ int main()
 {
 	mustInit(al_init(), "allegro");
 	mustInit(al_init_image_addon(), "image addon");
+	mustInit(al_init_font_addon(), "font addon");
 	mustInit(al_install_keyboard(), "keyboard");
 
 	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);
@@ -47,12 +48,18 @@ int main()
 	al_set_new_display_option(ALLEGRO_SUPPORT_NPOT_BITMAP, 0, ALLEGRO_REQUIRE);
 	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 
-	ALLEGRO_DISPLAY* disp = al_create_display(640, 480);
+	ALLEGRO_DISPLAY* disp = al_create_display(800, 600);
 	mustInit(disp, "display");
 	setPerspectiveTransform(al_get_backbuffer(disp));
 
+	ALLEGRO_BITMAP* overlay = al_create_sub_bitmap(al_get_backbuffer(disp), 0, 0, 800, 600);
+	mustInit(overlay, "bitmap");
+
 	ALLEGRO_FONT* font = al_create_builtin_font();
 	mustInit(font, "font");
+
+	ALLEGRO_COLOR textColour = al_map_rgb_f(1, 1, 1);
+	ALLEGRO_COLOR valueColour = al_map_rgb_f(0, 0, 1);
 
 	mustInit(al_init_primitives_addon(), "primitives");
 
@@ -64,7 +71,25 @@ int main()
 	al_register_event_source(queue, al_get_timer_event_source(timer));
 
 	Renderer renderer;
-	cubeSolver::Cube cube;
+	Cube cube;
+
+	Cube::SliceRotation::Axis axis = Cube::SliceRotation::Axis::none;
+	Cube::SliceRotation::Slice slice = Cube::SliceRotation::Slice::none;
+
+	const std::map<Cube::SliceRotation::Axis, const char*> axisToString = {
+		{ Cube::SliceRotation::Axis::x, "x" },
+		{ Cube::SliceRotation::Axis::y, "y" },
+		{ Cube::SliceRotation::Axis::z, "z" },
+		{ Cube::SliceRotation::Axis::none, "none" }
+	};
+
+	const std::map<Cube::SliceRotation::Slice, const char*> sliceToString = {
+		{ Cube::SliceRotation::Slice::first, "first" },
+		{ Cube::SliceRotation::Slice::second, "second" },
+		{ Cube::SliceRotation::Slice::third, "third" },
+		{ Cube::SliceRotation::Slice::all, "all" },
+		{ Cube::SliceRotation::Slice::none, "none" }
+	};
 
 	bool done = false;
 	bool redraw = true;
@@ -94,13 +119,33 @@ int main()
 				switch (event.keyboard.keycode)
 				{
 				case ALLEGRO_KEY_X:
-					cube.startRotating(Cube::SliceRotation::Axis::x, Cube::SliceRotation::third, true);
+					axis = Cube::SliceRotation::Axis::x;
 					break;
 				case ALLEGRO_KEY_Y:
-					cube.startRotating(Cube::SliceRotation::Axis::y, Cube::SliceRotation::second, false);
+					axis = Cube::SliceRotation::Axis::y;
 					break;
 				case ALLEGRO_KEY_Z:
-					cube.startRotating(Cube::SliceRotation::Axis::z, Cube::SliceRotation::third, false);
+					axis = Cube::SliceRotation::Axis::z;
+					break;
+				case ALLEGRO_KEY_1:
+					slice = Cube::SliceRotation::Slice::first;
+					break;
+				case ALLEGRO_KEY_2:
+					slice = Cube::SliceRotation::Slice::second;
+					break;
+				case ALLEGRO_KEY_3:
+					slice = Cube::SliceRotation::Slice::third;
+					break;
+				case ALLEGRO_KEY_A:
+					slice = Cube::SliceRotation::Slice::all;
+					break;
+				case ALLEGRO_KEY_PAD_PLUS:
+					if (axis != Cube::SliceRotation::Axis::none && slice != Cube::SliceRotation::Slice::none)
+						cube.startRotating(axis, slice, true);
+					break;
+				case ALLEGRO_KEY_PAD_MINUS:
+					if (axis != Cube::SliceRotation::Axis::none && slice != Cube::SliceRotation::Slice::none)
+						cube.startRotating(axis, slice, false);
 					break;
 				}
 			}
@@ -123,13 +168,21 @@ int main()
 			al_clear_depth_buffer(1000);
 
 			renderer.drawCube(texture, cube);
-			al_flip_display();
 
+			al_set_target_bitmap(overlay);
+			al_draw_text(font, textColour, 10, 10, 0, "Axis [x,y,z]:");
+			al_draw_text(font, textColour, 10, 25, 0, "Slice [1,2,3,a]:");
+			al_draw_text(font, textColour, 10, 40, 0, "Forward/Backward [+/-]");
+			al_draw_text(font, valueColour, 145, 10, 0, axisToString.at(axis));
+			al_draw_text(font, valueColour, 145, 25, 0, sliceToString.at(slice));
+
+			al_flip_display();
 			redraw = false;
 		}
 	}
 
 	al_destroy_font(font);
+	al_destroy_bitmap(overlay);
 	al_destroy_display(disp);
 	al_destroy_timer(timer);
 	al_destroy_event_queue(queue);
