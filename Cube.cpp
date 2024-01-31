@@ -45,17 +45,20 @@ namespace cubeSolver
 
 			for (int z = 0; z < 3; ++z)
 			{
-				if (sliceRotation.axis == SliceRotation::Axis::z && z != sliceRotation.slice)
+				if (sliceRotation.slice != SliceRotation::Slice::all &&
+					sliceRotation.axis == SliceRotation::Axis::z && z != sliceRotation.slice)
 					continue;
 
 				for (int y = 0; y < 3; ++y)
 				{
-					if (sliceRotation.axis == SliceRotation::Axis::y && y != sliceRotation.slice)
+					if (sliceRotation.slice != SliceRotation::Slice::all &&
+						sliceRotation.axis == SliceRotation::Axis::y && y != sliceRotation.slice)
 						continue;
 
 					for (int x = 0; x < 3; ++x)
 					{
-						if (sliceRotation.axis == SliceRotation::Axis::x && x != sliceRotation.slice)
+						if (sliceRotation.slice != SliceRotation::Slice::all &&
+							sliceRotation.axis == SliceRotation::Axis::x && x != sliceRotation.slice)
 							continue;
 
 						switch (sliceRotation.axis)

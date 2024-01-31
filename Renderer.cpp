@@ -87,7 +87,8 @@ void Renderer::drawCube(ALLEGRO_BITMAP* texture, Cube cube)
 			for (int x = 0; x < 3; ++x)
 			{
 				if (cube.isSliceRotating() &&
-					((sr.axis == Cube::SliceRotation::Axis::x && x == sr.slice) ||
+					(sr.slice == Cube::SliceRotation::Slice::all ||
+						(sr.axis == Cube::SliceRotation::Axis::x && x == sr.slice) ||
 						(sr.axis == Cube::SliceRotation::Axis::y && y == sr.slice) ||
 						(sr.axis == Cube::SliceRotation::Axis::z && z == sr.slice)))
 					al_use_transform(&rt);
