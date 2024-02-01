@@ -57,6 +57,28 @@ namespace cubeSolver
 			double angle;
 
 			SliceRotation() : axis(Axis::none), slice(Slice::none), angle(0) {}
+			SliceRotation(Axis axis, Slice slice, double angle) : axis(axis), slice(slice), angle(angle) {}
+		};
+
+		static const inline std::array<SliceRotation, 18> SLICE_ROTATIONS = {
+			SliceRotation(SliceRotation::Axis::x, SliceRotation::Slice::first, 0.001),
+			SliceRotation(SliceRotation::Axis::x, SliceRotation::Slice::first, -0.001),
+			SliceRotation(SliceRotation::Axis::x, SliceRotation::Slice::second, 0.001),
+			SliceRotation(SliceRotation::Axis::x, SliceRotation::Slice::second, -0.001),
+			SliceRotation(SliceRotation::Axis::x, SliceRotation::Slice::third, 0.001),
+			SliceRotation(SliceRotation::Axis::x, SliceRotation::Slice::third, -0.001),
+			SliceRotation(SliceRotation::Axis::y, SliceRotation::Slice::first, 0.001),
+			SliceRotation(SliceRotation::Axis::y, SliceRotation::Slice::first, -0.001),
+			SliceRotation(SliceRotation::Axis::y, SliceRotation::Slice::second, 0.001),
+			SliceRotation(SliceRotation::Axis::y, SliceRotation::Slice::second, -0.001),
+			SliceRotation(SliceRotation::Axis::y, SliceRotation::Slice::third, 0.001),
+			SliceRotation(SliceRotation::Axis::y, SliceRotation::Slice::third, -0.001),
+			SliceRotation(SliceRotation::Axis::z, SliceRotation::Slice::first, 0.001),
+			SliceRotation(SliceRotation::Axis::z, SliceRotation::Slice::first, -0.001),
+			SliceRotation(SliceRotation::Axis::z, SliceRotation::Slice::second, 0.001),
+			SliceRotation(SliceRotation::Axis::z, SliceRotation::Slice::second, -0.001),
+			SliceRotation(SliceRotation::Axis::z, SliceRotation::Slice::third, 0.001),
+			SliceRotation(SliceRotation::Axis::z, SliceRotation::Slice::third, -0.001)
 		};
 
 		bool isSliceRotating() const;

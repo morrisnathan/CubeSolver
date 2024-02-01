@@ -1,5 +1,7 @@
 #include <string>
 #include <iostream>
+#include <vector>
+#include <random>
 
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
@@ -27,6 +29,20 @@ void setPerspectiveTransform(ALLEGRO_BITMAP* bmp)
 	al_identity_transform(&p);
 	al_perspective_transform(&p, -1, aspect_ratio, 1.2, 1, -aspect_ratio, 1000);
 	al_use_projection_transform(&p);
+}
+
+std::vector<int> shuffleCube(int count)
+{
+	std::vector<int> rotations;
+
+	std::random_device device;
+	std::default_random_engine engine(device());
+	std::uniform_int_distribution<int> dist(0, static_cast<int>(Cube::SLICE_ROTATIONS.size()) - 1);
+
+	for (int i = 0; i < count; ++i)
+		rotations.push_back(dist(engine));
+
+	return rotations;
 }
 
 int main()
@@ -94,6 +110,10 @@ int main()
 	bool done = false;
 	bool redraw = true;
 
+	bool isShuffling = false;
+	std::vector<int> rotations;
+	int index = 0;
+
 	al_start_timer(timer);
 	while (true)
 	{
@@ -104,7 +124,21 @@ int main()
 		{
 		case ALLEGRO_EVENT_TIMER:
 			if (cube.isSliceRotating())
+			{
 				cube.rotateAndCheck();
+			}
+			else if (isShuffling)
+			{
+				if (index < 20)
+				{
+					const Cube::SliceRotation& rotation = Cube::SLICE_ROTATIONS[rotations.at(index++)];
+					cube.startRotating(rotation.axis, rotation.slice, rotation.angle > 0);
+				}
+				else
+				{
+					isShuffling = false;
+				}
+			}
 
 			redraw = true;
 			break;
@@ -114,7 +148,7 @@ int main()
 			{ 
 				done = true;
 			}
-			else if (!cube.isSliceRotating())
+			else if (!isShuffling && !cube.isSliceRotating())
 			{
 				switch (event.keyboard.keycode)
 				{
@@ -146,6 +180,28 @@ int main()
 				case ALLEGRO_KEY_PAD_MINUS:
 					if (axis != Cube::SliceRotation::Axis::none && slice != Cube::SliceRotation::Slice::none)
 						cube.startRotating(axis, slice, false);
+					break;
+				case ALLEGRO_KEY_S:
+				{
+					isShuffling = true;
+					rotations = shuffleCube(20);
+					index = 0;
+
+					const Cube::SliceRotation& rotation = Cube::SLICE_ROTATIONS[rotations.at(index++)];
+					cube.startRotating(rotation.axis, rotation.slice, rotation.angle > 0);
+					break;
+				}
+				case ALLEGRO_KEY_R:
+					if (rotations.size() > 0)
+					{
+						isShuffling = true;
+						std::reverse(rotations.begin(), rotations.end());
+						std::for_each(rotations.begin(), rotations.end(), [](int& i) { i % 2 == 0 ? ++i : --i; });
+						index = 0;
+
+						const Cube::SliceRotation& rotation = Cube::SLICE_ROTATIONS[rotations.at(index++)];
+						cube.startRotating(rotation.axis, rotation.slice, rotation.angle > 0);
+					}
 					break;
 				}
 			}
