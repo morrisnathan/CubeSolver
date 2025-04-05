@@ -1,9 +1,8 @@
-#include <string>
 #include <iostream>
-#include <vector>
 #include <random>
+#include <string>
+#include <vector>
 
-#include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
@@ -15,7 +14,7 @@ void mustInit(bool test, const std::string& description)
 {
 	if (test)
 		return;
-
+	
 	std::cout << "Couldn't initialize " << description << '\n';
 	exit(EXIT_FAILURE);
 }

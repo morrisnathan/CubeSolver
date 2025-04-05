@@ -1,6 +1,5 @@
 #pragma once
 
-#include <allegro5/color.h>
 #include <allegro5/allegro_primitives.h>
 
 #include "Cube.h"

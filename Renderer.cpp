@@ -1,5 +1,5 @@
-#include "Renderer.h"
 #include "Cube.h"
+#include "Renderer.h"
 
 Renderer::Renderer()
 {
